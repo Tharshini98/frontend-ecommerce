@@ -1,4 +1,4 @@
-// src/components/SuccessMessage.jsx
+
 import React from "react";
 
 const SuccessMessage = ({ message }) => {

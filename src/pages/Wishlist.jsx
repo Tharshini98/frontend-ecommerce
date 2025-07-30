@@ -9,12 +9,16 @@ const Wishlist = () => {
 
   useEffect(() => {
     const fetchWishlist = async () => {
-      const res = await api.get("/wishlist", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setWishlist(res.data);
+      try {
+        const res = await api.get("/wishlist", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setWishlist(res.data);
+      } catch (err) {
+        console.error("Failed to fetch wishlist", err);
+      }
     };
-    fetchWishlist();
+    if (token) fetchWishlist();
   }, [token]);
 
   const removeFromWishlist = async (productId) => {
@@ -22,9 +26,9 @@ const Wishlist = () => {
       await api.delete(`/wishlist/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setWishlist(wishlist.filter((item) => item._id !== productId));
+      setWishlist((prev) => prev.filter((item) => item._id !== productId));
     } catch (err) {
-      console.error("Failed to remove");
+      console.error("Failed to remove from wishlist", err);
     }
   };
 

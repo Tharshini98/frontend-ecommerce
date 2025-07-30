@@ -8,12 +8,16 @@ const SellerOrders = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const res = await api.get("/orders/seller", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setOrders(res.data);
+      try {
+        const res = await api.get("/orders/seller", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOrders(res.data);
+      } catch (err) {
+        console.error("Failed to fetch seller orders", err);
+      }
     };
-    fetchOrders();
+    if (token) fetchOrders();
   }, [token]);
 
   return (
