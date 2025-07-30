@@ -1,12 +1,34 @@
-# React + Vite
+#  MERN E-Commerce Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the **React + Tailwind CSS** frontend for the MERN E-Commerce platform. It supports buyers and sellers with features like product catalog, cart, checkout with Razorpay, wishlist, reviews, profile management, and dashboards.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##  Tech Stack
 
-## Expanding the ESLint configuration
+- React
+- Tailwind CSS
+- Axios
+- React Router DOM
+- Razorpay Integration
+- Context API
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🧾 Features
+
+### 👤 User (Buyer)
+- Register/Login
+- Browse Products by Category
+- View Products
+- Add to Cart
+- Wishlist Management
+- Checkout & Payment via Razorpay
+
+
+### Seller
+- Seller Dashboard
+- Add/Edit/Delete Products
+- View Seller Orders
+
+
+
