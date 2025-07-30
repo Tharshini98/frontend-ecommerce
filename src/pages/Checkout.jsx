@@ -1,69 +1,96 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
-import api from "../services/api";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Checkout = () => {
-  const { cart, clearCart } = useCart();
-  const { token } = useAuth();
+  const { cartItems, setCartItems } = useCart();
+  const navigate = useNavigate();
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const totalAmount = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
-  const handlePayment = async () => {
+  const loadRazorpay = async () => {
+    if (!window.Razorpay) {
+      alert("Razorpay SDK not loaded. Please try again later.");
+      return;
+    }
+
     try {
-    
-      const { data } = await api.post(
-        "/orders/razorpay",
-        { amount: total * 100 }, // in paise
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const { data } =await axios.post(
+  "https://backend-mrf6.onrender.com/api/payment/create-order",
+  { amount: Math.round(totalAmount * 100) }
+);
+
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY,
+        key: "rzp_test_Hz0OoUQL65ZW7O", 
         amount: data.amount,
-        currency: "INR",
-        name: "E-Commerce",
+        currency: data.currency,
+        name: "ShopZone",
         description: "Order Payment",
         order_id: data.id,
-        handler: async (response) => {
-          await api.post(
-            "/orders/verify",
-            {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              items: cart,
-            },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          clearCart();
-          alert("Payment Successful! Order Placed.");
+        handler: function (response) {
+          alert("Payment successful!");
+          setCartItems([]); 
+          navigate("/orders");
         },
         prefill: {
-          name: "Your Name",
-          email: "your@email.com",
+          name: "Customer",
+          email: "customer@example.com",
         },
-        theme: { color: "#0f172a" },
+        theme: {
+          color: "#2563eb",
+        },
       };
 
-      const rzp = new Razorpay(options);
+      const rzp = new window.Razorpay(options);
       rzp.open();
-    } catch (err) {
-      console.error(err);
-      alert("Payment failed. Try again.");
+    } catch (error) {
+      console.error("Razorpay Error:", error);
+      alert("Payment initiation failed. Please try again.");
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow rounded mt-6">
-      <h2 className="text-2xl font-bold mb-4">Checkout</h2>
-      <p className="mb-4">Total: ₹{total}</p>
-      <button
-        onClick={handlePayment}
-        className="bg-blue-600 text-white px-6 py-2 rounded"
-      >
-        Pay with Razorpay
-      </button>
+    <div className="p-6 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Checkout</h1>
+
+      {cartItems.length === 0 ? (
+        <p className="text-gray-600">Your cart is empty.</p>
+      ) : (
+        <div className="space-y-4">
+          {cartItems.map((item) => (
+            <div
+              key={item._id}
+              className="flex justify-between items-center border-b pb-2"
+            >
+              <div>
+                <h2 className="text-lg font-semibold">{item.name}</h2>
+                <p className="text-sm text-gray-600">
+                  Quantity: {item.quantity}
+                </p>
+              </div>
+              <div className="text-right font-medium text-gray-800">
+                ₹{item.price * item.quantity}
+              </div>
+            </div>
+          ))}
+
+          <div className="text-right text-xl font-bold">
+            Total: ₹{totalAmount.toFixed(2)}
+          </div>
+
+          <button
+            onClick={loadRazorpay}
+            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+          >
+            Pay with Razorpay
+          </button>
+        </div>
+      )}
     </div>
   );
 };

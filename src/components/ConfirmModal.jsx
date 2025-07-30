@@ -1,4 +1,4 @@
-// src/components/ConfirmModal.jsx
+
 import React from "react";
 
 const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {

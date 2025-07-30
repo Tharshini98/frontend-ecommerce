@@ -47,17 +47,25 @@ const Orders = () => {
               <div className="mb-2">
                 <span className="font-semibold">Total:</span> ₹{order.total}
               </div>
+
               <div>
                 <h4 className="font-semibold mb-2">Items:</h4>
-                <ul className="list-disc ml-5 text-sm">
-                  {order.items.map((item) => (
-                    <li key={item.product._id}>
-                      {item.product.name} × {item.qty} = ₹
-                      {item.product.price * item.qty}
-                    </li>
-                  ))}
-                </ul>
+                {Array.isArray(order.items) && order.items.length > 0 ? (
+                  <ul className="list-disc ml-5 text-sm">
+                    {order.items.map((item, index) => (
+                      <li key={index}>
+                        {item?.product?.name ?? "Unknown Product"} × {item.qty} = ₹
+                        {item?.product?.price
+                          ? item.product.price * item.qty
+                          : "?"}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">No items available.</p>
+                )}
               </div>
+
               <div className="mt-2 text-sm text-gray-500">
                 <p>Ordered at: {new Date(order.createdAt).toLocaleString()}</p>
               </div>

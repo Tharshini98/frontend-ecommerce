@@ -28,7 +28,7 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Welcome Back 👋
+          Welcome Back
         </h2>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-5">

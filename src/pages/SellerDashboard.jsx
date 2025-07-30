@@ -1,3 +1,4 @@
+// src/pages/SellerDashboard.jsx
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -9,10 +10,14 @@ const SellerDashboard = () => {
 
   useEffect(() => {
     const fetchMyProducts = async () => {
-      const res = await api.get("/products/my", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setProducts(res.data);
+      try {
+        const res = await api.get("/seller/products", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Failed to fetch seller products:", err);
+      }
     };
     fetchMyProducts();
   }, [token]);

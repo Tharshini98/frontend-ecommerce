@@ -1,61 +1,37 @@
-import React, { useEffect, useState } from "react";
-import api from "../services/api";
-import { useAuth } from "../context/AuthContext";
+import React from "react";
+import { useWishlist } from "../context/WishlistContext";
 import { Link } from "react-router-dom";
 
 const Wishlist = () => {
-  const { token } = useAuth();
-  const [wishlist, setWishlist] = useState([]);
-
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const res = await api.get("/wishlist", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setWishlist(res.data);
-      } catch (err) {
-        console.error("Failed to fetch wishlist", err);
-      }
-    };
-    if (token) fetchWishlist();
-  }, [token]);
-
-  const removeFromWishlist = async (productId) => {
-    try {
-      await api.delete(`/wishlist/${productId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setWishlist((prev) => prev.filter((item) => item._id !== productId));
-    } catch (err) {
-      console.error("Failed to remove from wishlist", err);
-    }
-  };
+  const { wishlist, removeFromWishlist } = useWishlist();
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">My Wishlist</h2>
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-2xl font-semibold mb-6">My Wishlist</h2>
+
       {wishlist.length === 0 ? (
-        <p>Your wishlist is empty.</p>
+        <p className="text-gray-600">Your wishlist is empty.</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {wishlist.map((item) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {wishlist.map((product) => (
             <div
-              key={item._id}
-              className="p-4 border rounded shadow bg-white"
+              key={product._id}
+              className="border rounded-xl shadow p-4 flex flex-col justify-between hover:shadow-lg transition"
             >
-              <Link to={`/products/${item._id}`}>
+              <Link to={`/products/${product._id}`}>
                 <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-40 object-cover rounded mb-2"
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-48 object-contain mb-4"
                 />
-                <h3 className="text-lg font-semibold">{item.name}</h3>
-                <p className="text-blue-600 font-bold">₹{item.price}</p>
+                <h3 className="text-lg font-medium mb-2">{product.name}</h3>
+                <p className="text-gray-700 font-semibold mb-1">₹{product.price}</p>
+                <p className="text-sm text-gray-600 mb-2">{product.category}</p>
               </Link>
+
               <button
-                onClick={() => removeFromWishlist(item._id)}
-                className="mt-2 text-red-600 text-sm"
+                onClick={() => removeFromWishlist(product._id)}
+                className="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-600 mt-auto"
               >
                 Remove
               </button>
